@@ -1,0 +1,12 @@
+# ignore text files
+*.txt
+
+# ignore the model weight files
+*.pt
+
+# ignore anything inside these folders
+/gpt2
+/sms_spam_collection
+
+# ignore any zipped folder
+*.zip
