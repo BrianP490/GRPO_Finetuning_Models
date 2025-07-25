@@ -3,6 +3,7 @@
 
 # ignore the model weight files
 *.pt
+*.pth
 
 # ignore anything inside these folders
 /gpt2
@@ -10,3 +11,5 @@
 
 # ignore any zipped folder
 *.zip
+
+/utils/__pycache__
