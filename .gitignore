@@ -13,3 +13,7 @@
 *.zip
 
 /utils/__pycache__
+
+/log
+
+test_gpt2_transfer.ipynb
