@@ -6,14 +6,12 @@
 *.pth
 
 # ignore anything inside these folders
-/gpt2
+/gpt2_models_directory
 /sms_spam_collection
 
 # ignore any zipped folder
 *.zip
 
-/utils/__pycache__
-
-/log
-
-test_gpt2_transfer.ipynb
+__pycache__/
+/models
+/.vscode
