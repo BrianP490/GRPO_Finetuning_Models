@@ -5,29 +5,19 @@ Expanding on ch.6 code from: [https://github.com/rasbt/LLMs-from-scratch]. The c
 
 ## Run on you local machine (GPU HIGHLY RECOMMENDED)
 1. 'git clone' this repository.
-\
-\
-```git clone https://github.com/BrianP490/GRPO_Finetuning_Models.git```
+    - ```git clone https://github.com/BrianP490/GRPO_Finetuning_Models.git```
 
 2. Use conda to install the required environment to run the interactive python notebooks and python script files.
-\
-\
-```conda env create -f ./setup/dev_requirements.yaml```
+    - ```conda env create -f ./setup/dev_requirements.yaml```
 
 3. Activate the environment in your terminal:
-\
-\
-```conda activate GRPO_env```
+    - ```conda activate GRPO_env```
 
-4. Run the main python script [grpo_gpt2_00_01.py](grpo_gpt2_00_01.py) with the environment on OR interactive python notebook file [/notebooks/grpo_gpt2_00_01.ipynb](notebooks/grpo_gpt2_00_01.ipynb) with the kernel selected as the environment. If running the notebook, you may also have to install the ipykernel when promted.
-\
-\
-```python grpo_gpt2_00_01.py```
+4. Run the main python script [grpo_gpt2_00_02.py](grpo_gpt2_00_02.py) with the environment on OR interactive python notebook file [grpo_gpt2_00_02.ipynb](grpo_gpt2_00_02.ipynb) with the kernel selected as the environment. If running the notebook, you may also have to install the ipykernel when promted.
+    - ```python grpo_gpt2_00_02.py```
 
-# Main Script: 
-## ```grpo_gpt2_00_01.py```
+# Main Script Parameters:
 
-Script Input Parameters
 You can customize the behavior of the training script by providing the following command-line arguments:
 
 - --epochs
@@ -181,3 +171,16 @@ You can customize the behavior of the training script by providing the following
     - Default: "models/Spam-Classifier-GPT2-Model.pt"
 
     - Description: File path to save the trained model. Parent directories will be created if they do not exist.
+
+
+### Example Commands:
+- ```python grpo_gpt2_00_02.py```
+    - Uses the default settings to run the script.
+    
+- ```python grpo_gpt2_00_02.py --epochs=32 --k_epochs=128 --log_iterations=4 --eval_iterations=8 --save_model```
+    - Explanation: Run for 32 epochs and 128 Group Relative Policy Optimization cycles. Log the average epoch statistics (e.g. loss, R1 Ratio, Entropy, etc.) results every 4 epochs. Evaluate the Policy under training every 8 epochs. Lastly, save the trained model. Uses the default save path. Uses default for everything else.
+    
+    
+- ```python grpo_gpt2_00_02.py --epochs=32 --k_epochs=128 --use_cuda --save_model --model_output_path=models/first-trained-model.pt```
+    - Explanation: Let the system detect if your system has GPU capabilities and has cuda available for training. During the training setup, the system dynamically sets the device variable for model training. Save the trained model using the specified location. Uses default for everything else.
+

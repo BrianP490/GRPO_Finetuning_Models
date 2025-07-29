@@ -1,5 +1,10 @@
 # Notebook Iterations/Versions
-This directory is for the different notebook iterations used
+This directory is for the different notebook iterations used during development
+
+### converted_to_scripts/
+- grpo_gpt2_00_00.py
+    - The first attempt to create a script from 'grpo_gpt2_00_00.ipynb'
+
 
 ### grpo_gpt2
 - 00.02
@@ -13,7 +18,7 @@ This directory is for the different notebook iterations used
     - Initial release
 
 ### grpo_gpt2_sandbox.ipynb:
-Testing
+For testing features and behaviors
 
 ### download_spam_dataset.ipynb:
-Developing module to download the dataset used for training
+Developing modules to download the dataset used for training

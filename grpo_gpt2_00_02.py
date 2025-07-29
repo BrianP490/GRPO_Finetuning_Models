@@ -1,6 +1,22 @@
 # %% [markdown]
-### grpo_gpt2_00_01.py
-# Using GRPO to finetune the chat gpt2 model
+### grpo_gpt2_00_02.py
+# # Using GRPO to finetune the chat gpt2 model
+# created from grpo_gpt2_00_02.ipynb
+
+# %% [markdown]
+# ## Versions
+
+# %% [markdown]
+# - 00.02
+#     - Created "grpo_gpt2_00_02.py"
+#     - Integrating 'download_spam_dataset.py' file
+#     - Adding parser compatability for ipynb file
+# - 00.01
+#     - Better Comments
+#     - Added Utility Functions
+#     - Created first conversion to .py files
+# - 00.00
+#     - Initial release
 
 # %% [markdown]
 # ## Imports
@@ -18,22 +34,14 @@ import pandas as pd
 from torch.nn import Module # For type hinting
 from typing import Tuple # Import Tuple for type hinting
 from tiktoken import Encoding  # For type hinting
-from utils import GPTModel, load_weights_into_gpt, download_and_load_gpt2
+from utils import GPTModel, load_weights_into_gpt, download_and_load_gpt2, download_dataset_wrapper, download_and_unzip_spam_data
 
-# pkgs = ["numpy", 
-#         "tiktoken", 
-#         "torch",
-#         # "tensorflow", # For OpenAI's pretrained weights
-#         "pandas"
-#        ]
-# for p in pkgs:
-#     print(f"{p} version: {version(p)}")
 
 # %% [markdown]
 # ## Dataset Class
 
 # %%
-def prepare_datasets(data_file_path="./sms_spam_collection/SMSSpamCollection.tsv", sep="\t", header=None, column_names=["Label", "Text"], train_frac=0.7, validation_frac=0.15, store_directory="./sms_spam_collection/data_splits"):
+def prepare_datasets(data_file_path: str="./sms_spam_collection/SMSSpamCollection.tsv", sep: str="\t", header: int=None, column_names: list=["Label", "Text"], train_frac: float=0.7, validation_frac: float=0.15, store_directory: str="./sms_spam_collection/data_splits"):
     """This function prepares the train, test, and validation datasets from the original data.
     Code inspired from: https://github.com/rasbt/LLMs-from-scratch/blob/main/ch06/01_main-chapter-code/ch06.ipynb
     Args:
@@ -48,7 +56,7 @@ def prepare_datasets(data_file_path="./sms_spam_collection/SMSSpamCollection.tsv
         store_directory (str): The parent directory path containing the 3 datasets.
         """
     
-    print(f"'prepare_datasets' function call: Using data_file_path='{data_file_path}' to find the original dataset.\n Using store_directory='{store_directory}' for the train, test, and validation dataset parent directory")
+    print(f"'prepare_datasets' function call: Using data_file_path='{data_file_path}'.\n Using store_directory='{store_directory}' for the train, test, and validation dataset parent directory")
 
     # Construct the full paths for the output files
     train_csv_path = os.path.join(store_directory, "train.csv")
@@ -59,8 +67,13 @@ def prepare_datasets(data_file_path="./sms_spam_collection/SMSSpamCollection.tsv
         print(f"Train, Test, and Validation datasets detected in '{store_directory}', skipping generation")
     else:
         print(f"Datasets not found in '{store_directory}' or incomplete. Generating datasets...")
+        
+        download_dataset_wrapper()  # From Utils package. Use Default Path
 
-        df = pd.read_csv(data_file_path, sep=sep, header=header, names=column_names)
+        try:
+            df = pd.read_csv(data_file_path, sep=sep, header=header, names=column_names)
+        except FileNotFoundError:
+            raise FileNotFoundError(f"File not found: {data_file_path} or other processing error")
 
         # Count the instances of "spam"
         num_spam = df[df["Label"] == "spam"].shape[0]
@@ -100,7 +113,7 @@ def prepare_datasets(data_file_path="./sms_spam_collection/SMSSpamCollection.tsv
 class SpamDataset(Dataset):
     """Dataset class to turn text into tokenized inputs
     Original Code in: https://github.com/rasbt/LLMs-from-scratch/blob/main/ch06/01_main-chapter-code/ch06.ipynb"""
-    def __init__(self, csv_file, tokenizer, max_length=None, pad_token_id=50256):
+    def __init__(self, csv_file: str, tokenizer: Encoding, max_length: int=None, pad_token_id:int=50256):
         try:
             self.data = pd.read_csv(csv_file)
         except FileNotFoundError:
@@ -150,7 +163,7 @@ class SpamDataset(Dataset):
 # ## Data Pipeline
 
 # %%
-def initialize_datasets_and_dataloaders_pipeline(data_file_path=None, store_directory=None, batch_size=64, num_workers=0, pin_memory=False, drop_last=True) -> tuple[Dataset, Dataset, Dataset, DataLoader, DataLoader, DataLoader, Encoding]:
+def initialize_datasets_and_dataloaders_pipeline(data_file_path: str=None, store_directory: str=None, batch_size: int=64, num_workers=0, pin_memory: bool=False, drop_last: bool=True) -> tuple[Dataset, Dataset, Dataset, DataLoader, DataLoader, DataLoader, Encoding]:
     """This pipeline does the following: calls function to prepare the train, test, and validation datasets, creates the dataloaders for each dataset, initializes the tokenizer, and returns them. Original code: https://github.com/rasbt/LLMs-from-scratch/blob/main/ch06/01_main-chapter-code/ch06.ipynb
     Args:
         data_file_path (str): Path to the original dataset.
@@ -175,7 +188,7 @@ def initialize_datasets_and_dataloaders_pipeline(data_file_path=None, store_dire
     """
     tokenizer = tiktoken.get_encoding("gpt2")
 
-    # Construct the arguments for prepare_datasets conditionally
+    # Construct the arguments for prepare_datasets conditionally; handle cases where nothing was sent in file and directory path
     prepare_args = {}
     if data_file_path is not None:
         prepare_args['data_file_path'] = data_file_path
@@ -208,7 +221,7 @@ def initialize_datasets_and_dataloaders_pipeline(data_file_path=None, store_dire
 # ## Building Policies
 
 # %%
-def build_new_policy(base_config, chosen_model="gpt2-small (124M)", num_classes=2) -> GPTModel:
+def build_new_policy(base_config: dict, chosen_model: str="gpt2-small (124M)", num_classes: int=2) -> GPTModel:
     """Build and load in the GPT2 model. Swap out the Head layer, and freeze up to the last Transformer module for transfer learning. Code Inspired from: https://github.com/rasbt/LLMs-from-scratch/blob/main/ch06/01_main-chapter-code/ch06.ipynb
     Args:
         base_config (dict): The base configurations of the gpt2 model indicating vocab_size, context_length, drop_rate, and qkv_bias.
@@ -253,7 +266,7 @@ def build_new_policy(base_config, chosen_model="gpt2-small (124M)", num_classes=
     return model
 
 # %%
-def build_old_policy(base_config, chosen_model="gpt2-small (124M)", num_classes = 2) -> GPTModel:
+def build_old_policy(base_config: dict, chosen_model: str="gpt2-small (124M)", num_classes: int = 2) -> GPTModel:
     """Construct the GPT2 model architecture without loading the weights. Code inspired from: https://github.com/rasbt/LLMs-from-scratch/blob/main/ch06/01_main-chapter-code/ch06.ipynb
     Args:
         base_config (dict): The base configurations of the gpt2 model indicating vocab_size, context_length, drop_rate, and qkv_bias.
@@ -284,7 +297,7 @@ def build_old_policy(base_config, chosen_model="gpt2-small (124M)", num_classes 
 # ## Utility Functions
 
 # %%
-def calculate_discounted_rewards(predictions, batch_labels, gamma) -> torch.tensor:
+def calculate_discounted_rewards(predictions: torch.tensor, batch_labels: torch.tensor, gamma: float) -> torch.tensor:
     """A general function to calculate the discounted rewards for each of the model's trajectories. For this implementation, however, use non-discounted rewards.
     Args:
         predictions (torch.tensor): A flattened 1-d tensor containing the policy's predictions.
@@ -297,11 +310,24 @@ def calculate_discounted_rewards(predictions, batch_labels, gamma) -> torch.tens
     return disc_rewards
 
 # %%
-def log_epoch_stats(epoch, epoch_limit, total_loss, ratio, entropy) -> None:
-    print(f"=====================  [Epoch ({epoch})]  =====================")
-    print("Last k_epoch stats:")
-    print(f"Loss: {total_loss:.7f} | Ratio: {ratio:.7f} | Entropy Term: {entropy:.7f}")
-    print(f"===========================================================")
+def log_epoch_stats(epoch: int, loss_epoch_hist: list, ratio_epoch_hist: list, entropy_epoch_hist: list) -> None:
+    if loss_epoch_hist and ratio_epoch_hist and entropy_epoch_hist:
+        print(f"=====================  [Epoch ({epoch})]  =====================")
+        stacked_losses = torch.stack(loss_epoch_hist)
+        avg_epoch_loss = stacked_losses.mean().item()
+
+        stacked_ratios = torch.stack(ratio_epoch_hist)
+        avg_epoch_ratio = stacked_ratios.mean().item()
+
+        stacked_entropies = torch.stack(entropy_epoch_hist)
+        avg_epoch_entropy = stacked_entropies.mean().item()
+        
+        print("Averages of:")
+        print(f"LOSS: {avg_epoch_loss:.7f} | RATIO: {avg_epoch_ratio:.7f} | ENTROPY: {avg_epoch_entropy:.7f}")
+        print(f"===========================================================")
+    else:
+        print("No Data collected for this epoch to calculate averages")
+
 
 # %%
 def evaluate_policy(Policy: Module, dataloader: DataLoader, current_epoch: int = None, max_epochs: int=None, device: str = 'cpu') -> float:
@@ -355,7 +381,7 @@ def evaluate_policy(Policy: Module, dataloader: DataLoader, current_epoch: int =
     return accuracy
 
 # %%
-def simple_spam_classify_single(Policy: GPTModel, input_text: str, tokenizer: Encoding, device='cpu'):
+def simple_spam_classify_single(Policy: GPTModel, input_text: str, tokenizer: Encoding, device: str='cpu'):
     """Used to test the Policy with a single messages to classify it as SPAM or NOT SPAM.
     Args:
         Policy (GPTModel): The Policy that will classify the text
@@ -386,7 +412,7 @@ def simple_spam_classify_single(Policy: GPTModel, input_text: str, tokenizer: En
     print("==================================================================")
 
 # %%
-def simple_spam_classify_batch(Policy: GPTModel, input_text: list, tokenizer: Encoding, device='cpu'):
+def simple_spam_classify_batch(Policy: GPTModel, input_text: list, tokenizer: Encoding, device: str='cpu'):
     """Used to test the Policy with a batch of messages to classify them as SPAM or NOT SPAM.
     Args:
         Policy (GPTModel): The Policy that will classify the text
@@ -483,6 +509,10 @@ def grpo_train(model_config: dict, train_dataloader: DataLoader, validation_data
     classifier_lyr = torch.nn.Softmax(dim=-1)   # For validation loop
 
     for epoch in tqdm(range(epochs), desc=f">>>>>>>>>>>>>>>>>>>>>\nMain Epoch (Outer Loop)", leave=True):     # STEP 4 || 
+        loss_hist = []
+        entropy_hist = []
+        r1_ratio_hist = []
+
         # STEP 5 || Sample a batch D_b from D
         batch_inputs, batch_labels = next(iter(train_dataloader))
         batch_inputs, batch_labels = batch_inputs.to(device), batch_labels.to(device) # move the training data to the target device
@@ -512,16 +542,18 @@ def grpo_train(model_config: dict, train_dataloader: DataLoader, validation_data
 
         # STEP 10 || GRPO Optimization ---
         for k_epoch in tqdm(range(k_epochs), desc=f"Epoch {epoch+1}/{epochs} (Inner K-Epochs)", leave=True):
-            print(f"===========================  [({k_epoch+1}/{k_epochs})]  ==========================\n")
+            print(f"===========================  [({k_epoch+1}/{k_epochs})]  ==========================")
             optimizer.zero_grad()   # Flush out all the accumulated gradients for the weights of the model-under-training!!!
 
             new_logits = Policy_New(batch_inputs)[:,-1,:]   # Get logits from model and only focus on the last iterations of each sample!!!
             new_dist = torch.distributions.Categorical(logits=new_logits)
             new_log_probs = new_dist.log_prob(old_predictions)  # Get the log probability of choosing the same action that the old policy took using the new distribution
             entropy = new_dist.entropy().mean() # Calculate entropy for regularization
-            # print(f"Entropy of this k_epoch: {entropy}")
+            # print(f"\nEntropy of this k_epoch: {entropy}")
+            entropy_hist.append(entropy)
             
             R1_ratio = torch.exp(new_log_probs - old_log_probs)
+            r1_ratio_hist.append(R1_ratio)
 
             unclipped_surrogate = R1_ratio * all_advantages_tensor
             clipped_surrogate = torch.clamp(input=R1_ratio, min=1.0-epsilon, max=1.0+epsilon) * all_advantages_tensor
@@ -537,6 +569,7 @@ def grpo_train(model_config: dict, train_dataloader: DataLoader, validation_data
             # Total Loss for GRPO
             total_loss = policy_loss + beta_kl * kl_loss - entropy_coeff * entropy
             # print(f"KL Divergence Average Loss: {kl_loss}")
+            loss_hist.append(total_loss)
 
             # STEP 11 || Policy Updates
             total_loss.backward()
@@ -546,7 +579,7 @@ def grpo_train(model_config: dict, train_dataloader: DataLoader, validation_data
 
         # --- Logging and Evaluation ---
         if (epoch + 1) % log_iterations == 0:
-            log_epoch_stats(epoch=epoch+1, epoch_limit=epochs, total_loss=total_loss.item(), ratio=R1_ratio.mean().item(), entropy=entropy)
+            log_epoch_stats(epoch=epoch+1, loss_epoch_hist=loss_hist, ratio_epoch_hist=r1_ratio_hist, entropy_epoch_hist=entropy_hist)
 
         if (epoch + 1) % eval_iterations == 0:
             accuracy = evaluate_policy(Policy_New, validation_dataloader, current_epoch=epoch+1, max_epochs=epochs, device=device)
@@ -554,11 +587,11 @@ def grpo_train(model_config: dict, train_dataloader: DataLoader, validation_data
 
     Policy_New.eval()   # Change to eval mode for evaluation after training is complete
 
+    print("Training complete.")
     return Policy_New # Return the trained policy
 
 # %% [markdown]
 # ## Main Loop
-
 
 # %%
 def main(args) -> int:
@@ -650,7 +683,7 @@ def main(args) -> int:
 # Example usage (assuming you have a way to call this function, e.g., in a main block)
 if __name__ == '__main__':
     # --- Begin Timing Main Script Execution Time ---
-    start_time=time.time()
+    main_start_time=time.time()
 
     parser = argparse.ArgumentParser(description="Train and evaluate a GPT-based Spam Classifier using GRPO.")
 
@@ -711,18 +744,16 @@ if __name__ == '__main__':
     parser.add_argument('--model_output_path', type=str, default='models/Spam-Classifier-GPT2-Model.pt',
         help='(str, default="models/Spam-Classifier-GPT2-Model.pt") File path to save the trained model.')
 
-    # Parse the arguments
-    args = parser.parse_args()
 
-    print(args)
+    args = parser.parse_args()
 
     ret = main(args)
 
-    end_time=time.time()
+    main_end_time=time.time()
 
     # --- Calculate Main Script Execution Time --- 
 
-    elapsed_time= end_time - start_time
+    elapsed_time= main_end_time - main_start_time
     hrs = int(elapsed_time / 3600)
     min = int((elapsed_time % 3600) / 60)
     seconds_remaining = elapsed_time - (hrs * 3600 ) - (min * 60)
