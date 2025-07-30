@@ -15,8 +15,8 @@ dependencies:
   - pytorch   # backbone for building nerual networks
   - pytorch-cuda=12.4 # available in anaconda.org on the pytorch channel
   - numpy=1.23.5
-  - tqdm    # sleek progress bar
+  - tqdm=4.67.1    # sleek progress bar
   - tiktoken=0.9.0
   - tensorflow=2.10.0
   - pandas>=2.3.1
-  - streamlit
+  - streamlit>=1.47
