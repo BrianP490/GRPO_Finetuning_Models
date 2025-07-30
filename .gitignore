@@ -9,9 +9,13 @@
 /gpt2_models_directory
 /sms_spam_collection
 
+
 # ignore any zipped folder
 *.zip
 
 __pycache__/
 /models
 /.vscode
+
+
+#/streamlit
