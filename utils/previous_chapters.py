@@ -202,10 +202,10 @@ class GPTModel(nn.Module):
         self.out_head = nn.Linear(cfg["emb_dim"], cfg["vocab_size"], bias=False)
 
     def forward(self, in_idx):
-        batch_size, seq_len = in_idx.shape  # (Batch_size, num_tokens)
+        batch_size, seq_len = in_idx.shape  # (Batch_size, max_num_tokens)
         tok_embeds = self.tok_emb(in_idx)
-        pos_embeds = self.pos_emb(torch.arange(seq_len, device=in_idx.device))
-        x = tok_embeds + pos_embeds  # Shape [batch_size, num_tokens, emb_size]
+        pos_embeds = self.pos_emb(torch.arange(seq_len, device=in_idx.device))  # Shape: (max_seq_len, emb_dim)
+        x = tok_embeds + pos_embeds  # Broadcasting! Resulting Shape=[batch_size, num_tokens, emb_size]
         x = self.drop_emb(x)
         x = self.trf_blocks(x)
         x = self.final_norm(x)
