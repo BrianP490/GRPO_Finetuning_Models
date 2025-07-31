@@ -1,4 +1,4 @@
-# /streamlit/app/main.py
+# /app/main.py
 import torch, os
 from importlib.metadata import version
 import streamlit as st
@@ -30,7 +30,7 @@ def load_model_and_tokenizer():
     }
     policy = build_old_policy(base_config=BASE_CONFIG, chosen_model="gpt2-small (124M)", num_classes=2)
     
-    model_parameters_path= Path("./models/Spam-Classifier-GPT2-Model.pt")
+    model_parameters_path= Path("./app/models/Spam-Classifier-GPT2-Model.pt")   # Factor in that the docker image will start in a different working directory (see Dockerfile)
 
     if not model_parameters_path.exists():
         st.error(f"Model Parameter file not found at: {model_parameters_path}. Please ensure it's in the correct location.")
