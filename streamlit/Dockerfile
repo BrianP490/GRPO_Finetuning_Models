@@ -1,8 +1,22 @@
 # Use an official Python runtime as a parent image.
-FROM python:3.10-slim-buster
+FROM docker.io/library/python:3.10-slim-bullseye
 
 # Set the working directory in the container.
-WORKDIR /app
+WORKDIR /lit
+
+# Install system dependencies required by PyTorch and others.
+RUN apt-get update && apt-get install -y \
+    build-essential \
+    curl \
+    git \
+    libgl1-mesa-glx \
+    && rm -rf /var/lib/apt/lists/*
+
+# Copy your requirements.txt file into the # Use an official Python runtime as a parent image.
+FROM docker.io/library/python:3.10-slim-bullseye
+
+# Set the working directory in the container.
+WORKDIR /lit
 
 # Install system dependencies required by PyTorch and others.
 RUN apt-get update && apt-get install -y \
@@ -20,9 +34,10 @@ RUN pip install --upgrade pip setuptools
 
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Copy your entire application code, including the model weights, into the container.
-# This assumes your model is at ./app/model_weights/model_policy.pth relative to the project root.
-COPY . /app
+# Copy your entire application code (all the files & directories where the Dockerfile is), including the model weights, into the container.
+# This assumes your model is at ./app/model_weights/model_policy.pth relative to the project hugging face root.
+# Another example, copies ./app/main.py
+COPY . /lit
 
 # Expose the port that Streamlit runs on.
 EXPOSE 8501
