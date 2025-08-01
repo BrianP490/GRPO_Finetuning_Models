@@ -1,5 +1,13 @@
 # %% [markdown]
 ### grpo_gpt2_00_02.py
+# Copyright (c) Sebastian Raschka under Apache License 2.0 (see LICENSE.txt).
+# Source for "Build a Large Language Model From Scratch"
+#   - https://www.manning.com/books/build-a-large-language-model-from-scratch
+# Code: https://github.com/rasbt/LLMs-from-scratch
+
+# This file has been modified by [Brian Perez] for the [GRPO_FINETUNING_MODELS] project.
+# The modifications are licensed under the same Apache License, Version 2.0.
+
 # # Using GRPO to finetune the chat gpt2 model
 # created from grpo_gpt2_00_02.ipynb
 

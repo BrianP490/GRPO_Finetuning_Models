@@ -1,4 +1,11 @@
 # /streamlit/app/scripts/modules.py
+# Copyright (c) Sebastian Raschka under Apache License 2.0 (see LICENSE.txt).
+# Source for "Build a Large Language Model From Scratch"
+#   - https://www.manning.com/books/build-a-large-language-model-from-scratch
+# Code: https://github.com/rasbt/LLMs-from-scratch
+
+# This file has been modified by [Brian Perez] for the [Spam_Classifier_Agent] project.
+# The modifications are licensed under the same Apache License, Version 2.0.
 import torch
 import torch.nn as nn
 

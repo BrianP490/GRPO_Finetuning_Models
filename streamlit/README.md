@@ -1,33 +1,40 @@
-# My First Streamlit App
+---
+title: Spam Classifier Agent
+emoji: 📧
+colorFrom: blue
+colorTo: green
+sdk: streamlit
+sdk_version: 1.47.1
+app_file: streamlit/app/main.py
+python_version: 3.10
+---
 
-This is a simple "Hello World" Streamlit application that demonstrates basic interactive widgets.
+# 📧 Spam Classifier Agent Live Demo
 
-## Setup
+A Streamlit web application that leverages a fine-tuned GPT-2 model to classify text messages as either "SPAM" or "NOT SPAM". This agent helps users quickly determine the nature of a message. Try it here @ [SoggyBurritos/Spam_Classifier_Agent](https://huggingface.co/spaces/SoggyBurritos/Spam_Classifier_Agent)
 
-1.  **Clone the repository (if applicable):**
-    ```bash
-    git clone [https://github.com/your-username/your-repo-name.git](https://github.com/your-username/your-repo-name.git)
-    cd your-repo-name
-    ```
-    (Skip this step if you're just creating the files locally.)
+## ✨ Features
 
-2.  **Create a virtual environment (recommended):**
-    ```bash
-    conda env create -f ./streamlit/streamlit_env.yaml
-    ```
+* **Text Input:** Easily enter any text message for classification.
+* **Real-time Prediction:** Get instant results on whether the message is spam or not.
+* **Probability Scores:** View the confidence scores for both "SPAM" and "NOT SPAM" categories.
+* **Intuitive UI:** A clean and user-friendly interface built with Streamlit.
+* **Fine-tuned GPT-2 Model:** Utilizes a powerful transformer model for accurate classification.
 
-3.  **Activate the virtual environment:**
-    ```conda activate strl_env```
+## 💻 How to Use
 
-4.  **Install dependencies:**
-    ```bash
-    pip install -r ./streamlit/requirements.txt
-    ```
+1.  **Enter Text:** Type or paste the message you want to classify into the provided text area.
+2.  **Analyze:** Click the "Analyze Text" button.
+3.  **View Results:** The application will display the prediction (SPAM or NOT SPAM) along with the probability scores.
 
-## How to Run
+## ⚙️ Technical Details for Hugging Face Spaces
 
-Make sure your virtual environment is activated, navigate to the streamlit directory, then run the Streamlit app from your terminal:
+**App File Location:**
+The main Streamlit application script is located at `streamlit/app/main.py`. Hugging Face Spaces will be configured to run this specific file.
 
-```bash
-cd streamlit
-streamlit run ./app/main.py
+**Dependencies:**
+All required Python packages for this deployment is listed in `requirements.txt`.
+
+**Model & Data:**
+* The fine-tuned GPT-2 model weights (`Spam-Classifier-GPT2-Model.pt`) are expected to be in the `models/` directory at the root of the repository.
+* The application also relies on data preparation scripts which may download or create necessary data files.

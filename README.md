@@ -3,6 +3,9 @@ Finetuning a Generative Pretrained Transformer Model (GPT2) with GRPO
 
 Expanding on ch.6 code from: [https://github.com/rasbt/LLMs-from-scratch]. The code in this repository uses Group-Relative Policy Optimized fine tuning to get the trained classifier that determines if an input text is SPAM or NOT SPAM.
 
+## Try it in the could with a Live demo on Hugging Face spaces:
+Try it here @ [SoggyBurritos/Spam_Classifier_Agent](https://huggingface.co/spaces/SoggyBurritos/Spam_Classifier_Agent)
+
 ## Run on you local machine (GPU HIGHLY RECOMMENDED)
 1. 'git clone' this repository.
     - ```git clone https://github.com/BrianP490/GRPO_Finetuning_Models.git```

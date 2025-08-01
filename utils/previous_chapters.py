@@ -3,9 +3,8 @@
 #   - https://www.manning.com/books/build-a-large-language-model-from-scratch
 # Code: https://github.com/rasbt/LLMs-from-scratch
 #
-# This file collects all the relevant code that we covered thus far
-# throughout Chapters 2-5.
-# This file can be run as a standalone script.
+# This file has been modified by [Brian Perez] for the [GRPO_FINETUNING_MODELS] project.
+# The modifications are licensed under the same Apache License, Version 2.0.
 
 import numpy as np
 import tiktoken
