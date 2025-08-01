@@ -1,12 +1,15 @@
 ---
 title: Spam Classifier Agent
-emoji: 📧
-colorFrom: blue
-colorTo: green
-sdk: streamlit
-sdk_version: 1.47.1
-app_file: streamlit/app/main.py
-python_version: 3.10
+emoji: 🚀
+colorFrom: red
+colorTo: red
+sdk: docker
+app_port: 8501
+tags:
+- streamlit
+pinned: false
+short_description: Streamlit Demo App
+license: apache-2.0
 ---
 
 # 📧 Spam Classifier Agent Live Demo

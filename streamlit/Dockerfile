@@ -28,5 +28,7 @@ COPY . /lit
 # Expose the port that Streamlit runs on.
 EXPOSE 8501
 
-# Command to run the Streamlit application when the container starts.
-ENTRYPOINT ["streamlit", "run", "app/main.py", "--server.port=8501", "--server.address=0.0.0.0", "--server.enableCORS=false", "--browser.gatherUsageStats=false", "--server.fileWatcherType=none"]
+HEALTHCHECK CMD curl --fail http://localhost:8501/_stcore/health
+
+# Command to run the Streamlit application when the container starts. (starting from /lit)
+ENTRYPOINT ["streamlit", "run", "app/main.py", "--server.port=8501", "--server.address=0.0.0.0", "--browser.gatherUsageStats=false", "--server.fileWatcherType=none"]
