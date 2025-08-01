@@ -1,5 +1,3 @@
-# ignore text files
-*.txt
 
 # ignore the model weight files
 *.pt
@@ -18,4 +16,4 @@ __pycache__/
 /.vscode
 
 
-#/streamlit
+notes.txt
