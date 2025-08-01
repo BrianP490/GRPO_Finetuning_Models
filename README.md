@@ -1,10 +1,10 @@
 # GRPO_Finetuning_Models
-Finetuning a Generative Pretrained Transformer Model (GPT2) with GRPO
+Finetuning a Generative Pretrained Transformer Model (GPT2) with Group-Relative Policy Optimization.
 
-Expanding on ch.6 code from: [https://github.com/rasbt/LLMs-from-scratch]. The code in this repository uses Group-Relative Policy Optimized fine tuning to get the trained classifier that determines if an input text is SPAM or NOT SPAM.
+Expanding on ch.6 code from: [https://github.com/rasbt/LLMs-from-scratch]. The code in this repository uses Group-Relative Policy Optimized fine tuning to get a trained classifier model that determines if an input text is SPAM or NOT SPAM.
 
-## Try it in the could with a Live demo on Hugging Face spaces:
-Try it here @ [SoggyBurritos/Spam_Classifier_Agent](https://huggingface.co/spaces/SoggyBurritos/Spam_Classifier_Agent)
+## Try out the trained model in the cloud:
+- Live "Spam or Not Spam" Classification Agent demo on Hugging Face spaces @ [SoggyBurritos/Spam_Classifier_Agent](https://huggingface.co/spaces/SoggyBurritos/Spam_Classifier_Agent)
 
 ## Run on you local machine (GPU HIGHLY RECOMMENDED)
 1. 'git clone' this repository.
@@ -19,7 +19,7 @@ Try it here @ [SoggyBurritos/Spam_Classifier_Agent](https://huggingface.co/space
 4. Run the main python script [grpo_gpt2_00_02.py](grpo_gpt2_00_02.py) with the environment on OR interactive python notebook file [grpo_gpt2_00_02.ipynb](grpo_gpt2_00_02.ipynb) with the kernel selected as the environment. If running the notebook, you may also have to install the ipykernel when promted.
     - ```python grpo_gpt2_00_02.py```
 
-# Main Script Parameters:
+## Main Script Parameters:
 
 You can customize the behavior of the training script by providing the following command-line arguments:
 
