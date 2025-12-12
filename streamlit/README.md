@@ -8,7 +8,7 @@ app_port: 8501
 tags:
 - streamlit
 pinned: false
-short_description: Streamlit Demo App
+short_description: Helps identify and diagnose diabetes in patients
 license: apache-2.0
 ---
 
